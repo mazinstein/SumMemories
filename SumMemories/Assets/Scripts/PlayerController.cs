@@ -17,8 +17,9 @@ public class PlayerController : MonoBehaviour
     private bool isDashing = false;
     private float lastDashTime;
 
-    private Camera mainCamera;
-    private Vector2 minBounds, maxBounds;
+    [Header("Level Horizontal Bounds")]
+    public float minX; // левая граница
+    public float maxX; // правая граница
 
     [Header("Sprite")]
     public Transform spriteTransform;
@@ -27,8 +28,6 @@ public class PlayerController : MonoBehaviour
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
-        mainCamera = Camera.main;
-        UpdateCameraBounds();
 
         if (spriteTransform == null)
             spriteTransform = transform;
@@ -38,7 +37,6 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
-        // Считываем ввод только в Update
         if (!isDashing)
         {
             movement.x = Input.GetAxisRaw("Horizontal");
@@ -58,7 +56,7 @@ public class PlayerController : MonoBehaviour
         // Анимация
         UpdateAnimation();
 
-        // Флип спрайта по X для горизонтали
+        // Флип спрайта по X
         if (movement.x != 0)
         {
             spriteTransform.localScale = new Vector3(
@@ -73,18 +71,16 @@ public class PlayerController : MonoBehaviour
     {
         if (!isDashing)
         {
-            // Мгновенное движение через velocity
             rb.linearVelocity = movement * moveSpeed;
 
-            // Ограничиваем границы камеры
+            // Ограничиваем только горизонтальные границы
             Vector2 clampedPos = rb.position;
-            clampedPos.x = Mathf.Clamp(clampedPos.x, minBounds.x, maxBounds.x);
-            clampedPos.y = Mathf.Clamp(clampedPos.y, minBounds.y, maxBounds.y);
+            clampedPos.x = Mathf.Clamp(rb.position.x, minX, maxX);
             rb.position = clampedPos;
         }
         else
         {
-            rb.linearVelocity = Vector2.zero; // останавливаем движение во время даша
+            rb.linearVelocity = Vector2.zero;
         }
     }
 
@@ -94,11 +90,9 @@ public class PlayerController : MonoBehaviour
         Vector2 startPos = rb.position;
         Vector2 targetPos = startPos + direction.normalized * dashDistance;
 
-        // Ограничиваем границами камеры
-        targetPos.x = Mathf.Clamp(targetPos.x, minBounds.x, maxBounds.x);
-        targetPos.y = Mathf.Clamp(targetPos.y, minBounds.y, maxBounds.y);
+        // Ограничение только по X
+        targetPos.x = Mathf.Clamp(targetPos.x, minX, maxX);
 
-        // Анимация даша
         animator.SetBool("IsDashing", true);
 
         while ((Vector2)rb.position != targetPos)
@@ -111,29 +105,17 @@ public class PlayerController : MonoBehaviour
         animator.SetBool("IsDashing", false);
     }
 
-    void UpdateCameraBounds()
-    {
-        float camHeight = mainCamera.orthographicSize;
-        float camWidth = camHeight * mainCamera.aspect;
-
-        minBounds = (Vector2)mainCamera.transform.position - new Vector2(camWidth, camHeight);
-        maxBounds = (Vector2)mainCamera.transform.position + new Vector2(camWidth, camHeight);
-    }
-
     void UpdateAnimation()
     {
         if (movement.sqrMagnitude > 0 && !isDashing)
         {
-            // Определяем главное направление: горизонталь или вертикаль
             if (Mathf.Abs(movement.x) > Mathf.Abs(movement.y))
             {
-                // Горизонтальное движение
-                animator.SetFloat("MoveX", 1); // всегда вправо, флип спрайта делает левую анимацию
+                animator.SetFloat("MoveX", 1);
                 animator.SetFloat("MoveY", 0);
             }
             else
             {
-                // Вертикальное движение
                 animator.SetFloat("MoveX", 0);
                 animator.SetFloat("MoveY", movement.y);
             }
