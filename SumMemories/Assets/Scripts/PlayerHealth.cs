@@ -14,4 +14,9 @@ public class PlayerHealth : MonoBehaviour
     {
         currentHealth = Mathf.Min(currentHealth + amount, maxHealth);
     }
+
+    public void TakeDamage(float amount)
+    {
+        currentHealth = Mathf.Max(currentHealth - amount, 0);
+    }
 }
