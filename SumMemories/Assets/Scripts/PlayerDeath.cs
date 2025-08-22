@@ -3,27 +3,33 @@
 public class PlayerDeath : MonoBehaviour
 {
     private PlayerHealth playerHealth;
+    private HealthBar healthBar;
 
     void Start()
     {
         playerHealth = GetComponent<PlayerHealth>();
+        healthBar = FindObjectOfType<HealthBar>();
     }
 
     void Update()
     {
+        // Нижняя граница камеры
         float lowerBound = Camera.main.ViewportToWorldPoint(new Vector3(0, 0, 0)).y;
 
+        // Если игрок опустился ниже
         if (transform.position.y < lowerBound)
         {
             if (playerHealth != null)
+                playerHealth.currentHealth = 0f;
+
+            if (healthBar != null)
             {
-                playerHealth.currentHealth = 0; // сразу убиваем
-                playerHealth.TakeDamage(playerHealth.maxHealth); // если хочешь триггер анимаций/событий
+                healthBar.SetSize(0f);
+                healthBar.SetColor(Color.red);
             }
 
-            Debug.Log("Game Over!");
-            // можно отключить управление или вызвать меню
-            // Destroy(gameObject); ← если надо полностью убрать игрока
+            Debug.Log("Game Over! Игрок коснулся нижней границы.");
+            Destroy(gameObject);
         }
     }
 }

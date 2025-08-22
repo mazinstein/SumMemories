@@ -78,26 +78,25 @@ public class PlayerController : MonoBehaviour
             clampedPos.x = Mathf.Clamp(rb.position.x, minX, maxX);
             rb.position = clampedPos;
         }
-        else
-        {
-            rb.linearVelocity = Vector2.zero;
-        }
     }
 
     IEnumerator Dash(Vector2 direction)
     {
         isDashing = true;
+        animator.SetBool("IsDashing", true);
+
+        float elapsed = 0f;
         Vector2 startPos = rb.position;
         Vector2 targetPos = startPos + direction.normalized * dashDistance;
 
         // Ограничение только по X
         targetPos.x = Mathf.Clamp(targetPos.x, minX, maxX);
 
-        animator.SetBool("IsDashing", true);
-
-        while ((Vector2)rb.position != targetPos)
+        while (elapsed < dashDuration)
         {
-            rb.position = Vector2.MoveTowards(rb.position, targetPos, dashDistance / dashDuration * Time.fixedDeltaTime);
+            elapsed += Time.fixedDeltaTime;
+            Vector2 newPos = Vector2.Lerp(startPos, targetPos, elapsed / dashDuration);
+            rb.MovePosition(newPos); // ✅ корректные коллизии при движении
             yield return new WaitForFixedUpdate();
         }
 
