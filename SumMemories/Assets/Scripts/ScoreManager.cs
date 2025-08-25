@@ -3,15 +3,17 @@ using TMPro;
 
 public class ScoreManager : MonoBehaviour
 {
-    public PlayerHealth playerHealth;
+    public PlayerController playerController;
     public TMP_Text scoreText;
-    public float scorePerSecond = 10f;
 
-    public float pulseScale = 1.2f;
-    public float pulseSpeed = 5f;
+    [Header("Настройки очков")]
+    public int scorePerUnit = 1;       // сколько очков даёт движение
+    public int scoreStepForSpeed = 100; // через сколько очков увеличиваем скорость
 
     private float score = 0f;
     private Vector3 originalScale;
+    public float pulseScale = 1.2f;
+    public float pulseSpeed = 5f;
     private bool pulse = false;
     private float pulseTimer = 0f;
 
@@ -23,15 +25,19 @@ public class ScoreManager : MonoBehaviour
 
     void Update()
     {
-        if (playerHealth == null || playerHealth.currentHealth <= 0) return;
+        if (playerController == null || scoreText == null) return;
 
-        // Начисляем очки
-        score += scorePerSecond * Time.deltaTime;
-        scoreText.text = Mathf.FloorToInt(score).ToString();
+        // Начисляем очки только если есть движение
+        if (playerController.movement.sqrMagnitude > 0)
+        {
+            score += scorePerUnit * Time.deltaTime;
+            scoreText.text = Mathf.FloorToInt(score).ToString();
 
-        // Пульс при обновлении
-        pulse = true;
+            // Пульс при обновлении
+            pulse = true;
+        }
 
+        // Плавная пульсация
         if (pulse)
         {
             pulseTimer += Time.deltaTime * pulseSpeed;
@@ -47,9 +53,14 @@ public class ScoreManager : MonoBehaviour
         }
     }
 
-    // 🔹 Добавляем этот метод
     public float GetScore()
     {
         return score;
+    }
+
+    public int GetSpeedStep()
+    {
+        // Возвращаем сколько “шагов скорости” уже пройдено
+        return Mathf.FloorToInt(score / scoreStepForSpeed);
     }
 }

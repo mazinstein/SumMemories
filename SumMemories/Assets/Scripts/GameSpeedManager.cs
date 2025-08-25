@@ -2,27 +2,39 @@ using UnityEngine;
 
 public class GameSpeedManager : MonoBehaviour
 {
-    [Header("Ссылки")]
-    public PlayerController playerController;  // скрипт движения игрока
-    public LoopingTilemap loopingTilemap;      // скрипт скролла карты
-    public ScoreManager scoreManager;          // счёт очков
+    public PlayerController playerController;
+    public LoopingTilemap loopingTilemap;
+    public ScoreManager scoreManager;
 
-    [Header("Базовые скорости")]
     public float basePlayerSpeed = 5f;
     public float baseScrollSpeed = 2f;
+    public float playerSpeedPerStep = 0.5f;
+    public float scrollSpeedPerStep = 0.2f;
 
-    [Header("Прирост скорости")]
-    public float playerSpeedPerPoint = 0.01f;  // прирост скорости игрока за 1 очко
-    public float scrollSpeedPerPoint = 0.005f; // прирост скролла тайлмапа за 1 очко
+    public float maxPlayerSpeed = 15f;
+    public float maxScrollSpeed = 6f;
+
+    public float smoothTime = 1f;
+
+    private float playerVelocity = 0f;
+    private float scrollVelocity = 0f;
+    private int lastSpeedStep = 0;
 
     void Update()
     {
         if (scoreManager == null || playerController == null || loopingTilemap == null) return;
 
-        float currentScore = scoreManager.GetScore();
+        int currentStep = scoreManager.GetSpeedStep();
 
-        // Плавное увеличение скоростей
-        playerController.moveSpeed = basePlayerSpeed + currentScore * playerSpeedPerPoint;
-        loopingTilemap.scrollSpeed = baseScrollSpeed + currentScore * scrollSpeedPerPoint;
+        if (currentStep > lastSpeedStep)
+        {
+            lastSpeedStep = currentStep;
+        }
+
+        float targetPlayerSpeed = Mathf.Min(basePlayerSpeed + lastSpeedStep * playerSpeedPerStep, maxPlayerSpeed);
+        float targetScrollSpeed = Mathf.Min(baseScrollSpeed + lastSpeedStep * scrollSpeedPerStep, maxScrollSpeed);
+
+        playerController.moveSpeed = Mathf.SmoothDamp(playerController.moveSpeed, targetPlayerSpeed, ref playerVelocity, smoothTime);
+        loopingTilemap.scrollSpeed = Mathf.SmoothDamp(loopingTilemap.scrollSpeed, targetScrollSpeed, ref scrollVelocity, smoothTime);
     }
 }

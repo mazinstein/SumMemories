@@ -16,8 +16,8 @@ public class ShadowSpawner : MonoBehaviour
     public float minDistance = 2f;   // минимальное расстояние между тенями
     public int maxAttempts = 10;     // сколько раз пробовать найти свободное место
 
-    [Header("Tilemap Reference")]
-    public LoopingTilemap loopingTilemap; // для скорости скролла
+    [Header("Ссылка на тайлмап для скорости")]
+    public LoopingTilemap loopingTilemap;
 
     void Start()
     {
@@ -31,8 +31,10 @@ public class ShadowSpawner : MonoBehaviour
         for (int attempt = 0; attempt < maxAttempts; attempt++)
         {
             GameObject prefab = shadowPrefabs[Random.Range(0, shadowPrefabs.Length)];
+
+            // Спавним **выше камеры**, чтобы игрок не видел появление
             float x = Random.Range(spawnTopLeft.position.x, spawnBottomRight.position.x);
-            float y = Random.Range(spawnBottomRight.position.y, spawnTopLeft.position.y);
+            float y = Camera.main.transform.position.y + Camera.main.orthographicSize + Random.Range(1f, 3f); 
             Vector2 spawnPos = new Vector2(x, y);
 
             // Проверка на минимальное расстояние
@@ -41,9 +43,10 @@ public class ShadowSpawner : MonoBehaviour
             {
                 GameObject shadow = Instantiate(prefab, spawnPos, Quaternion.identity);
 
-                // Скрипт движения с тайлмапом
-                ShadowMover mover = shadow.AddComponent<ShadowMover>();
-                mover.scrollSpeed = loopingTilemap.scrollSpeed;
+                // Движение вниз
+                ShadowMover mover = shadow.GetComponent<ShadowMover>();
+                if (mover == null) mover = shadow.AddComponent<ShadowMover>();
+                mover.moveSpeed = loopingTilemap.scrollSpeed;
 
                 // HealZone
                 HealZone healZone = shadow.GetComponent<HealZone>();
@@ -55,7 +58,7 @@ public class ShadowSpawner : MonoBehaviour
                 if (col == null) col = shadow.AddComponent<BoxCollider2D>();
                 col.isTrigger = true;
 
-                // Уничтожение через время
+                // Плавное исчезновение
                 Destroy(shadow, shadowDuration);
 
                 break; // нашли свободное место → выходим из цикла

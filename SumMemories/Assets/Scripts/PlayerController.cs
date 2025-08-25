@@ -13,9 +13,10 @@ public class PlayerController : MonoBehaviour
     public Animator animator;
 
     private Rigidbody2D rb;
-    private Vector2 movement;
+    public Vector2 movement;
     private bool isDashing = false;
     private float lastDashTime;
+    private bool isDead = false; // 🔹 новое поле
 
     [Header("Level Horizontal Bounds")]
     public float minX; // левая граница
@@ -25,18 +26,29 @@ public class PlayerController : MonoBehaviour
     public Transform spriteTransform;
     private Vector3 originalScale;
 
+    private PlayerHealth health; // 🔹 ссылка на здоровье
+
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
+        health = GetComponent<PlayerHealth>();
 
         if (spriteTransform == null)
             spriteTransform = transform;
 
         originalScale = spriteTransform.localScale;
+
+        // Подписываемся на событие смерти
+        if (health != null)
+        {
+            health.OnDeath += Die;
+        }
     }
 
     void Update()
     {
+        if (isDead) return; // 🔹 если мёртв — ничего не делаем
+
         if (!isDashing)
         {
             movement.x = Input.GetAxisRaw("Horizontal");
@@ -69,15 +81,14 @@ public class PlayerController : MonoBehaviour
 
     void FixedUpdate()
     {
-        if (!isDashing)
-        {
-            rb.linearVelocity = movement * moveSpeed;
+        if (isDead || isDashing) return;
 
-            // Ограничиваем только горизонтальные границы
-            Vector2 clampedPos = rb.position;
-            clampedPos.x = Mathf.Clamp(rb.position.x, minX, maxX);
-            rb.position = clampedPos;
-        }
+        rb.linearVelocity = movement * moveSpeed;
+
+        // Ограничиваем только горизонтальные границы
+        Vector2 clampedPos = rb.position;
+        clampedPos.x = Mathf.Clamp(rb.position.x, minX, maxX);
+        rb.position = clampedPos;
     }
 
     IEnumerator Dash(Vector2 direction)
@@ -96,7 +107,7 @@ public class PlayerController : MonoBehaviour
         {
             elapsed += Time.fixedDeltaTime;
             Vector2 newPos = Vector2.Lerp(startPos, targetPos, elapsed / dashDuration);
-            rb.MovePosition(newPos); // ✅ корректные коллизии при движении
+            rb.MovePosition(newPos); 
             yield return new WaitForFixedUpdate();
         }
 
@@ -106,6 +117,8 @@ public class PlayerController : MonoBehaviour
 
     void UpdateAnimation()
     {
+        if (isDead) return;
+
         if (movement.sqrMagnitude > 0 && !isDashing)
         {
             if (Mathf.Abs(movement.x) > Mathf.Abs(movement.y))
@@ -127,5 +140,18 @@ public class PlayerController : MonoBehaviour
             animator.SetFloat("MoveY", 0);
             animator.SetBool("IsMoving", false);
         }
+    }
+
+    // 🔹 Вызов смерти игрока
+    public void Die()
+    {
+        if (isDead) return;
+
+        isDead = true;
+        rb.linearVelocity = Vector2.zero;
+        animator.SetTrigger("Die"); // нужна анимация смерти
+        Debug.Log("Игрок умер");
+
+        // можно вызвать GameManager.GameOver() если он есть
     }
 }
