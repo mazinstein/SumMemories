@@ -29,7 +29,7 @@ public class ScoreManager : MonoBehaviour
         score += scorePerSecond * Time.deltaTime;
         scoreText.text = Mathf.FloorToInt(score).ToString();
 
-        // Запуск пульсации при изменении числа
+        // Пульс при обновлении
         pulse = true;
 
         if (pulse)
@@ -45,5 +45,11 @@ public class ScoreManager : MonoBehaviour
                 scoreText.transform.localScale = originalScale;
             }
         }
+    }
+
+    // 🔹 Добавляем этот метод
+    public float GetScore()
+    {
+        return score;
     }
 }

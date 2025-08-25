@@ -194,8 +194,7 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 1994331265}
+  m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &446106401
@@ -797,6 +796,7 @@ MonoBehaviour:
   healPerSecond: 5
   minDistance: 1
   maxAttempts: 10
+  loopingTilemap: {fileID: 387432630}
 --- !u!4 &872961834
 Transform:
   m_ObjectHideFlags: 0
@@ -805,7 +805,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 872961832}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -1349,6 +1349,7 @@ GameObject:
   - component: {fileID: 1655646262}
   - component: {fileID: 1655646261}
   - component: {fileID: 1655646263}
+  - component: {fileID: 1655646264}
   m_Layer: 0
   m_Name: GameHandler
   m_TagString: Untagged
@@ -1402,6 +1403,25 @@ MonoBehaviour:
   scorePerSecond: 10
   pulseScale: 1.2
   pulseSpeed: 5
+--- !u!114 &1655646264
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1655646260}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d576b687e90d443ddb266a35546937dc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playerController: {fileID: 1994331264}
+  loopingTilemap: {fileID: 387432630}
+  scoreManager: {fileID: 1655646263}
+  basePlayerSpeed: 3
+  baseScrollSpeed: 1
+  playerSpeedPerPoint: 0.01
+  scrollSpeedPerPoint: 0.005
 --- !u!1 &1777880854
 GameObject:
   m_ObjectHideFlags: 0
@@ -1539,7 +1559,6 @@ GameObject:
   - component: {fileID: 1994331267}
   - component: {fileID: 1994331266}
   - component: {fileID: 1994331268}
-  - component: {fileID: 1994331270}
   - component: {fileID: 1994331269}
   m_Layer: 0
   m_Name: Player
@@ -1654,7 +1673,7 @@ Transform:
   m_LocalScale: {x: 5, y: 5, z: 0}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 387432631}
+  m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!95 &1994331266
 Animator:
@@ -1760,20 +1779,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   damagePerSecond: 10
---- !u!114 &1994331270
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1994331261}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 470999112af350a4d8c77df604d2fb25, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  maxHealth: 100
-  currentHealth: 100
 --- !u!1 &2010620364
 GameObject:
   m_ObjectHideFlags: 0
@@ -1936,7 +1941,7 @@ SceneRoots:
   - {fileID: 519420032}
   - {fileID: 619394802}
   - {fileID: 387432631}
-  - {fileID: 872961834}
+  - {fileID: 1994331265}
   - {fileID: 1272412666}
   - {fileID: 446106401}
   - {fileID: 2010620368}
@@ -1945,3 +1950,4 @@ SceneRoots:
   - {fileID: 1465654004}
   - {fileID: 1083918888}
   - {fileID: 704300332}
+  - {fileID: 872961834}
