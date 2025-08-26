@@ -1411,6 +1411,7 @@ GameObject:
   - component: {fileID: 1655646263}
   - component: {fileID: 1655646264}
   - component: {fileID: 1655646265}
+  - component: {fileID: 1655646266}
   m_Layer: 0
   m_Name: GameHandler
   m_TagString: Untagged
@@ -1503,6 +1504,21 @@ MonoBehaviour:
   firstPauseButton: {fileID: 1077198874}
   pauseCanvasGroup: {fileID: 133578618}
   fadeDuration: 0.3
+--- !u!114 &1655646266
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1655646260}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a57a7b3c57fd23e49a2d27174d16bc32, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  enemyPrefab: {fileID: 118976169772052216, guid: 80a67d956ddd5704d82ec31613a6e040, type: 3}
+  spawnInterval: 1
+  spawnX: 10
 --- !u!1 &1777880854
 GameObject:
   m_ObjectHideFlags: 0
