@@ -798,7 +798,7 @@ MonoBehaviour:
   spawnBottomRight: {fileID: 1777880855}
   shadowDuration: 30
   healPerSecond: 5
-  minDistance: 2
+  minDistance: 3
   maxAttempts: 10
   loopingTilemap: {fileID: 387432630}
 --- !u!4 &872961834
@@ -1225,17 +1225,9 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
-    m_AddedGameObjects:
-    - targetCorrespondingSourceObject: {fileID: 8973024520919085090, guid: bfa845870469446a1898be14b356cb44, type: 3}
-      insertIndex: 0
-      addedObject: {fileID: 1331856096}
+    m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bfa845870469446a1898be14b356cb44, type: 3}
---- !u!4 &1331856096 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 3430285385315745529, guid: 3f774478c2a95c640a15c19550049925, type: 3}
-  m_PrefabInstance: {fileID: 529728750339535932}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1451030878
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1412,6 +1404,7 @@ GameObject:
   - component: {fileID: 1655646264}
   - component: {fileID: 1655646265}
   - component: {fileID: 1655646266}
+  - component: {fileID: 1655646267}
   m_Layer: 0
   m_Name: GameHandler
   m_TagString: Untagged
@@ -1517,8 +1510,29 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   enemyPrefab: {fileID: 118976169772052216, guid: 80a67d956ddd5704d82ec31613a6e040, type: 3}
-  spawnInterval: 1
-  spawnX: 10
+  spawnInterval: 2
+--- !u!114 &1655646267
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1655646260}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 97f2b9fbf3f79bd479e730f2425bb446, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  iceCreamPrefab: {fileID: 1394111918909709814, guid: 3f774478c2a95c640a15c19550049925, type: 3}
+  minSpawnTime: 3
+  maxSpawnTime: 5
+  spawnXMin: -5
+  spawnXMax: 5
+  spawnYOffset: 1
+  forbiddenLayers:
+    serializedVersion: 2
+    m_Bits: 64
+  checkRadius: 0.5
 --- !u!1 &1777880854
 GameObject:
   m_ObjectHideFlags: 0
@@ -1834,63 +1848,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 8973024520919085090, guid: bfa845870469446a1898be14b356cb44, type: 3}
   m_PrefabInstance: {fileID: 1272412666}
   m_PrefabAsset: {fileID: 0}
---- !u!1001 &529728750339535932
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 2121419831}
-    m_Modifications:
-    - target: {fileID: 1394111918909709814, guid: 3f774478c2a95c640a15c19550049925, type: 3}
-      propertyPath: m_Name
-      value: IceCreamPowerUp
-      objectReference: {fileID: 0}
-    - target: {fileID: 3430285385315745529, guid: 3f774478c2a95c640a15c19550049925, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 0.98
-      objectReference: {fileID: 0}
-    - target: {fileID: 3430285385315745529, guid: 3f774478c2a95c640a15c19550049925, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 2.91
-      objectReference: {fileID: 0}
-    - target: {fileID: 3430285385315745529, guid: 3f774478c2a95c640a15c19550049925, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: -0.05998993
-      objectReference: {fileID: 0}
-    - target: {fileID: 3430285385315745529, guid: 3f774478c2a95c640a15c19550049925, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 0.9548953
-      objectReference: {fileID: 0}
-    - target: {fileID: 3430285385315745529, guid: 3f774478c2a95c640a15c19550049925, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3430285385315745529, guid: 3f774478c2a95c640a15c19550049925, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3430285385315745529, guid: 3f774478c2a95c640a15c19550049925, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0.2969428
-      objectReference: {fileID: 0}
-    - target: {fileID: 3430285385315745529, guid: 3f774478c2a95c640a15c19550049925, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3430285385315745529, guid: 3f774478c2a95c640a15c19550049925, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3430285385315745529, guid: 3f774478c2a95c640a15c19550049925, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 34.548
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 3f774478c2a95c640a15c19550049925, type: 3}
 --- !u!1001 &1542424703617885287
 PrefabInstance:
   m_ObjectHideFlags: 0

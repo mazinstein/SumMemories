@@ -124,8 +124,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f6b0aec82bc39ee40ab3b677d8101a3a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 2
-  damage: 10
+  health: 30
+  iceCreamPrefab: {fileID: 1394111918909709814, guid: 3f774478c2a95c640a15c19550049925, type: 3}
+  iceCreamDropChance: 0.1
 --- !u!60 &3912226281106288414
 PolygonCollider2D:
   m_ObjectHideFlags: 0

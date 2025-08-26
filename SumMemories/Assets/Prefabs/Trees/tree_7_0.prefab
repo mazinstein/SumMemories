@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 5296932928885285870}
   - component: {fileID: 938573584239788983}
   - component: {fileID: 3566595397518491119}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: tree_7_0
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -226,4 +226,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a6bfdafc8cdea409ab4cbcaac40a6011, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  scrollSpeed: 0.2
+  moveSpeed: 2
