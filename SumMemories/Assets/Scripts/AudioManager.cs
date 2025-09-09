@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using UnityEngine.UI;
 
 public class AudioManager : MonoBehaviour
 {
@@ -8,41 +7,43 @@ public class AudioManager : MonoBehaviour
     [Header("Music")]
     public AudioSource musicSource;
 
-    [Header("UI Elements")]
-    public Image musicIcon;       // иконка на кнопке
-    public Sprite musicOnIcon;
-    public Sprite musicOffIcon;
-
     private bool isMusicOn = true;
 
     private void Awake()
     {
         if (Instance == null) Instance = this;
-        else Destroy(gameObject);
+        else
+        {
+            Destroy(gameObject);
+            return;
+        }
 
-        DontDestroyOnLoad(gameObject); // сохраняем музыку при смене сцен
+        DontDestroyOnLoad(gameObject);
     }
 
     private void Start()
     {
-        UpdateMusicIcon();
+        // Восстановим состояние mute
+        isMusicOn = PlayerPrefs.GetInt("MusicOn", 1) == 1;
+        musicSource.mute = !isMusicOn;
+
+        // Музыка не останавливается при паузе
+        musicSource.ignoreListenerPause = true;
+        musicSource.ignoreListenerVolume = true;
     }
 
     public void ToggleMusic()
     {
         isMusicOn = !isMusicOn;
         musicSource.mute = !isMusicOn;
-        UpdateMusicIcon();
+
+        // Сохраним состояние
+        PlayerPrefs.SetInt("MusicOn", isMusicOn ? 1 : 0);
+        PlayerPrefs.Save();
     }
 
-    public void SetVolume(float volume)
+    public bool IsMusicOn()
     {
-        musicSource.volume = volume;
-    }
-
-    private void UpdateMusicIcon()
-    {
-        if (musicIcon != null)
-            musicIcon.sprite = isMusicOn ? musicOnIcon : musicOffIcon;
+        return isMusicOn;
     }
 }

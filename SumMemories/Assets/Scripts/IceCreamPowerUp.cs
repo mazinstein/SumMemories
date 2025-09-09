@@ -3,12 +3,24 @@
 public class IceCreamPowerUp : MonoBehaviour
 {
     public float healAmount = 20f; // сколько хп восстанавливаем
-    public float fallSpeed = 2f;   // скорость падения
+    public float fallSpeed = 2f;   // базовая скорость падения
+
+    private LoopingTilemap tilemap;
+
+    private void Start()
+    {
+        // Находим LoopingTilemap на сцене
+        tilemap = FindObjectOfType<LoopingTilemap>();
+    }
 
     private void Update()
     {
-        // Двигаем мороженое вниз относительно камеры
-        transform.position += -Camera.main.transform.up * fallSpeed * Time.deltaTime;
+        // Итоговая скорость падения = базовая + скорость скролла тайлов
+        float scrollSpeed = tilemap != null ? tilemap.scrollSpeed : 0f;
+        float totalFallSpeed = fallSpeed + scrollSpeed;
+
+        // Двигаем мороженое вниз с учётом скорости скролла
+        transform.position += -Camera.main.transform.up * totalFallSpeed * Time.deltaTime;
 
         // Удаляем, если вышло за нижнюю границу камеры
         float cameraBottom = Camera.main.transform.position.y - Camera.main.orthographicSize - 1f;
