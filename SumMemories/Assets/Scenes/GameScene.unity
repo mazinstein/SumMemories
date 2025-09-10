@@ -417,8 +417,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4278190080
-  m_fontColor: {r: 0, g: 0, b: 0, a: 1}
+    rgba: 4294967295
+  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -2725,7 +2725,7 @@ MonoBehaviour:
       - m_Target: {fileID: 1936686141}
         m_TargetAssemblyTypeName: GameOverUI, Assembly-CSharp
         m_MethodName: LoadMainMenu
-        m_Mode: 5
+        m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -2934,7 +2934,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: -2579957754792524931, guid: 46053477159514e4db3b8402e66fd337, type: 3}
+  m_Sprite: {fileID: 2318850175068859235, guid: b4b8b9ce0a6fe42b1a5d0490f8c8c18e, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
