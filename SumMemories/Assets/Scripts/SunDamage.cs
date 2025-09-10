@@ -14,21 +14,16 @@ public class SunDamage : MonoBehaviour
     {
         health = GetComponent<PlayerHealth>();
 
-        // Новый способ поиска
+        // Новый способ поиска (Unity 2023+)
         sunlightEffect = Object.FindFirstObjectByType<SunlightEffect>();
     }
 
     void Update()
     {
-        if (!inShadow)
+        if (!inShadow && health != null && health.currentHealth > 0)
         {
-            health.currentHealth -= damagePerSecond * Time.deltaTime;
-
-            if (health.currentHealth <= 0)
-            {
-                Debug.Log("Game Over!");
-                Destroy(gameObject); // потом заменишь на вызов GameManager
-            }
+            // Наносим урон через PlayerHealth
+            health.TakeDamage(damagePerSecond * Time.deltaTime);
         }
     }
 
