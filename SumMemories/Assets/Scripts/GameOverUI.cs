@@ -1,87 +1,99 @@
 ﻿using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
+using TMPro;
 using System.Collections;
 
 public class GameOverUI : MonoBehaviour
 {
-    [Header("UI References (assign in Inspector)")]
-    public CanvasGroup panelGroup;      // фон / панель
-    public CanvasGroup buttonsGroup;    // контейнер для кнопок (Restart / Menu)
+    [Header("UI References")]
+    public CanvasGroup panelGroup;      // фон меню
+    public CanvasGroup buttonsGroup;    // контейнер кнопок
+    public TMP_Text gameOverText;       // надпись "GAME OVER"
+    public TMP_Text scoreText;
+    public TMP_Text bestScoreText;
 
     [Header("Animation Settings")]
     public float fadeDuration = 0.5f;
-    public float buttonDelay = 0.25f;
+    public float buttonDelay = 0.3f;
+
+    [Header("Pulse Settings")]
+    public float pulseScale = 1.2f;
+    public float pulseSpeed = 2f;
+
+    private Vector3 originalScale;
+    private bool isPulsing = false;
 
     private void Awake()
     {
-        // безопасные null-проверки
-        if (panelGroup != null)
-        {
-            panelGroup.alpha = 0f;
-            panelGroup.interactable = false;
-            panelGroup.blocksRaycasts = false;
-        }
+        // Меню скрыто в начале
+        panelGroup.alpha = 0;
+        panelGroup.interactable = false;
+        panelGroup.blocksRaycasts = false;
 
-        if (buttonsGroup != null)
-        {
-            buttonsGroup.alpha = 0f;
-            buttonsGroup.interactable = false;
-            buttonsGroup.blocksRaycasts = false;
-        }
+        buttonsGroup.alpha = 0;
+        buttonsGroup.interactable = false;
+        buttonsGroup.blocksRaycasts = false;
 
-        // по умолчанию объект может быть активен или не активен — не важно
-        // но визуально скрываем элементы
+        if (gameOverText != null)
+            originalScale = gameOverText.transform.localScale;
     }
 
-    // Вызывается из GameHandler; использует unscaled time чтобы анимация шла в паузе
     public void ShowGameOver()
     {
-        gameObject.SetActive(true);
-        StartCoroutine(FadeInSequence());
+        StartCoroutine(FadeInMenu());
     }
 
-    private IEnumerator FadeInSequence()
+    private IEnumerator FadeInMenu()
     {
-        if (panelGroup != null)
+        // Плавное появление панели
+        float t = 0f;
+        while (t < fadeDuration)
         {
-            float t = 0f;
-            while (t < fadeDuration)
-            {
-                t += Time.unscaledDeltaTime;
-                panelGroup.alpha = Mathf.Lerp(0f, 1f, t / fadeDuration);
-                yield return null;
-            }
-            panelGroup.alpha = 1f;
-            panelGroup.interactable = true;
-            panelGroup.blocksRaycasts = true;
+            t += Time.unscaledDeltaTime;
+            panelGroup.alpha = Mathf.Lerp(0, 1, t / fadeDuration);
+            yield return null;
         }
+        panelGroup.alpha = 1;
+        panelGroup.interactable = true;
+        panelGroup.blocksRaycasts = true;
 
-        // задержка перед кнопками (немного паузы, чтобы выглядело ровнее)
+        // Включаем пульсацию
+        isPulsing = true;
+
+        // Задержка перед кнопками
         yield return new WaitForSecondsRealtime(buttonDelay);
 
-        if (buttonsGroup != null)
+        // Плавное появление кнопок
+        t = 0f;
+        while (t < fadeDuration)
         {
-            float t = 0f;
-            while (t < fadeDuration)
-            {
-                t += Time.unscaledDeltaTime;
-                buttonsGroup.alpha = Mathf.Lerp(0f, 1f, t / fadeDuration);
-                yield return null;
-            }
-            buttonsGroup.alpha = 1f;
-            buttonsGroup.interactable = true;
-            buttonsGroup.blocksRaycasts = true;
+            t += Time.unscaledDeltaTime;
+            buttonsGroup.alpha = Mathf.Lerp(0, 1, t / fadeDuration);
+            yield return null;
+        }
+        buttonsGroup.alpha = 1;
+        buttonsGroup.interactable = true;
+        buttonsGroup.blocksRaycasts = true;
+    }
+
+    private void Update()
+    {
+        if (isPulsing && gameOverText != null)
+        {
+            float scale = 1f + Mathf.Sin(Time.unscaledTime * pulseSpeed) * (pulseScale - 1f);
+            gameOverText.transform.localScale = originalScale * scale;
         }
     }
 
-    // UI-кнопки -> назначить эти методы
+    // 🔹 Методы для кнопок
     public void RestartGame()
     {
         Time.timeScale = 1f;
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 
-    public void LoadMainMenu(string menuSceneName = "MainMenu")
+    public void LoadMainMenu()
     {
         Time.timeScale = 1f;
         SceneManager.LoadScene("MainMenu");
