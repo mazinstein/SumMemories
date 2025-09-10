@@ -84,6 +84,6 @@ public class GameOverUI : MonoBehaviour
     public void LoadMainMenu(string menuSceneName = "MainMenu")
     {
         Time.timeScale = 1f;
-        SceneManager.LoadScene(menuSceneName);
+        SceneManager.LoadScene("MainMenu");
     }
 }
