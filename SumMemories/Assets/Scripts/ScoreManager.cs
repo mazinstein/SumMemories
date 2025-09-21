@@ -63,4 +63,20 @@ public class ScoreManager : MonoBehaviour
         // Возвращаем сколько “шагов скорости” уже пройдено
         return Mathf.FloorToInt(score / scoreStepForSpeed);
     }
+
+    public int GetBestScore()
+    {
+        return PlayerPrefs.GetInt("BestScore", 0);
+    }
+
+    public void TrySetBestScore()
+    {
+        int currentScore = Mathf.FloorToInt(score);
+        int bestScore = GetBestScore();
+        if (currentScore > bestScore)
+        {
+            PlayerPrefs.SetInt("BestScore", currentScore);
+            PlayerPrefs.Save();
+        }
+    }
 }

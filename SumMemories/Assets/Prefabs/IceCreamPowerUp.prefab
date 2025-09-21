@@ -156,4 +156,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   healAmount: 20
-  fallSpeed: 1
+  fallSpeed: 0

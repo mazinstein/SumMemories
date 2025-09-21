@@ -22,7 +22,16 @@ public class GameOverUI : MonoBehaviour
     public float pulseSpeed = 2f;
 
     private Vector3 originalScale;
+    private Vector3 scoreOriginalScale;
+    private Vector3 bestScoreOriginalScale;
     private bool isPulsing = false;
+    private bool isScorePulsing = false;
+    private bool isBestScorePulsing = false;
+
+    private float scoreFade = 0f;
+    private float bestScoreFade = 0f;
+
+    public ScoreManager scoreManager; // Добавьте ссылку через инспектор или найдите на сцене
 
     private void Awake()
     {
@@ -37,11 +46,30 @@ public class GameOverUI : MonoBehaviour
 
         if (gameOverText != null)
             originalScale = gameOverText.transform.localScale;
+        if (scoreText != null)
+            scoreOriginalScale = scoreText.transform.localScale;
+        if (bestScoreText != null)
+            bestScoreOriginalScale = bestScoreText.transform.localScale;
     }
 
     public void ShowGameOver()
     {
+        // Сохраняем лучший результат
+        scoreManager.TrySetBestScore();
+
+        // Показываем очки
+        int currentScore = Mathf.FloorToInt(scoreManager.GetScore());
+        int bestScore = scoreManager.GetBestScore();
+        scoreText.text = $"Score: {currentScore}";
+        bestScoreText.text = $"Best: {bestScore}";
+
+        scoreText.alpha = 0f;
+        scoreText.transform.localScale = scoreOriginalScale * 0.7f;
+        bestScoreText.alpha = 0f;
+        bestScoreText.transform.localScale = bestScoreOriginalScale * 0.7f;
         StartCoroutine(FadeInMenu());
+        StartCoroutine(AnimateScoreText());
+        StartCoroutine(AnimateBestScoreText());
     }
 
     private IEnumerator FadeInMenu()
@@ -60,6 +88,8 @@ public class GameOverUI : MonoBehaviour
 
         // Включаем пульсацию
         isPulsing = true;
+        isScorePulsing = true;
+        isBestScorePulsing = true;
 
         // Задержка перед кнопками
         yield return new WaitForSecondsRealtime(buttonDelay);
@@ -84,6 +114,16 @@ public class GameOverUI : MonoBehaviour
             float scale = 1f + Mathf.Sin(Time.unscaledTime * pulseSpeed) * (pulseScale - 1f);
             gameOverText.transform.localScale = originalScale * scale;
         }
+        if (isScorePulsing && scoreText != null)
+        {
+            float scale = 1f + Mathf.Sin(Time.unscaledTime * pulseSpeed) * (pulseScale - 1f);
+            scoreText.transform.localScale = scoreOriginalScale * scale;
+        }
+        if (isBestScorePulsing && bestScoreText != null)
+        {
+            float scale = 1f + Mathf.Sin(Time.unscaledTime * pulseSpeed) * (pulseScale - 1f);
+            bestScoreText.transform.localScale = bestScoreOriginalScale * scale;
+        }
     }
 
     // 🔹 Методы для кнопок
@@ -97,5 +137,37 @@ public class GameOverUI : MonoBehaviour
     {
         Time.timeScale = 1f;
         SceneManager.LoadScene("MainMenu");
+    }
+
+    private IEnumerator AnimateScoreText()
+    {
+        float t = 0f;
+        float duration = 0.6f;
+        while (t < duration)
+        {
+            t += Time.unscaledDeltaTime;
+            float progress = Mathf.SmoothStep(0, 1, t / duration);
+            scoreText.alpha = progress;
+            scoreText.transform.localScale = Vector3.Lerp(scoreOriginalScale * 0.7f, scoreOriginalScale, progress);
+            yield return null;
+        }
+        scoreText.alpha = 1f;
+        scoreText.transform.localScale = scoreOriginalScale;
+    }
+
+    private IEnumerator AnimateBestScoreText()
+    {
+        float t = 0f;
+        float duration = 0.6f;
+        while (t < duration)
+        {
+            t += Time.unscaledDeltaTime;
+            float progress = Mathf.SmoothStep(0, 1, t / duration);
+            bestScoreText.alpha = progress;
+            bestScoreText.transform.localScale = Vector3.Lerp(bestScoreOriginalScale * 0.7f, bestScoreOriginalScale, progress);
+            yield return null;
+        }
+        bestScoreText.alpha = 1f;
+        bestScoreText.transform.localScale = bestScoreOriginalScale;
     }
 }
