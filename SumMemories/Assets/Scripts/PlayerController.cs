@@ -16,17 +16,22 @@ public class PlayerController : MonoBehaviour
     public Vector2 movement;
     private bool isDashing = false;
     private float lastDashTime;
-    private bool isDead = false; // 🔹 новое поле
+    private bool isDead = false;
 
     [Header("Level Horizontal Bounds")]
-    public float minX; // левая граница
-    public float maxX; // правая граница
+    public float minX;
+    public float maxX;
 
     [Header("Sprite")]
     public Transform spriteTransform;
     private Vector3 originalScale;
 
-    private PlayerHealth health; // 🔹 ссылка на здоровье
+    private PlayerHealth health;
+
+    [Header("Mobile Controls")]
+    public Joystick joystick; // перетащи сюда FixedJoystick из Canvas
+    public GameObject dashButton; // перетащи сюда кнопку Dash из Canvas
+    public GameObject joystickObject; // перетащи сюда GameObject джойстика из Canvas
 
     void Start()
     {
@@ -38,7 +43,6 @@ public class PlayerController : MonoBehaviour
 
         originalScale = spriteTransform.localScale;
 
-        // Подписываемся на событие смерти
         if (health != null)
         {
             health.OnDeath += Die;
@@ -47,16 +51,25 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
-        if (isDead) return; // 🔹 если мёртв — ничего не делаем
+        if (isDead) return;
 
-        if (!isDashing)
+        // ---------------------------
+        // 1️⃣ Считываем ввод
+        // ---------------------------
+        float inputX = Input.GetAxisRaw("Horizontal"); // ПК
+        float inputY = Input.GetAxisRaw("Vertical");   // ПК
+
+        if (joystick != null)
         {
-            movement.x = Input.GetAxisRaw("Horizontal");
-            movement.y = Input.GetAxisRaw("Vertical");
-            movement.Normalize();
+            inputX += joystick.Horizontal;
+            inputY += joystick.Vertical;
         }
 
-        // Dash
+        movement = new Vector2(inputX, inputY).normalized;
+
+        // ---------------------------
+        // 2️⃣ Dash на ПК
+        // ---------------------------
         if (Input.GetKeyDown(KeyCode.Space) && Time.time >= lastDashTime + dashCooldown && !isDashing)
         {
             Vector2 dashDir = movement;
@@ -65,10 +78,14 @@ public class PlayerController : MonoBehaviour
             lastDashTime = Time.time;
         }
 
-        // Анимация
+        // ---------------------------
+        // 3️⃣ Анимация
+        // ---------------------------
         UpdateAnimation();
 
-        // Флип спрайта по X
+        // ---------------------------
+        // 4️⃣ Флип спрайта по X
+        // ---------------------------
         if (movement.x != 0)
         {
             spriteTransform.localScale = new Vector3(
@@ -85,7 +102,7 @@ public class PlayerController : MonoBehaviour
 
         rb.linearVelocity = movement * moveSpeed;
 
-        // Ограничиваем только горизонтальные границы
+        // Ограничиваем горизонтальные границы
         Vector2 clampedPos = rb.position;
         clampedPos.x = Mathf.Clamp(rb.position.x, minX, maxX);
         rb.position = clampedPos;
@@ -100,14 +117,13 @@ public class PlayerController : MonoBehaviour
         Vector2 startPos = rb.position;
         Vector2 targetPos = startPos + direction.normalized * dashDistance;
 
-        // Ограничение только по X
         targetPos.x = Mathf.Clamp(targetPos.x, minX, maxX);
 
         while (elapsed < dashDuration)
         {
             elapsed += Time.fixedDeltaTime;
             Vector2 newPos = Vector2.Lerp(startPos, targetPos, elapsed / dashDuration);
-            rb.MovePosition(newPos); 
+            rb.MovePosition(newPos);
             yield return new WaitForFixedUpdate();
         }
 
@@ -142,16 +158,31 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    // 🔹 Вызов смерти игрока
     public void Die()
     {
         if (isDead) return;
 
         isDead = true;
         rb.linearVelocity = Vector2.zero;
-        animator.SetTrigger("Die"); // нужна анимация смерти
+        animator.SetTrigger("Die");
         Debug.Log("Игрок умер");
 
-        // можно вызвать GameManager.GameOver() если он есть
+        // Скрыть мобильные элементы управления
+        if (dashButton != null)
+            dashButton.SetActive(false);
+        if (joystickObject != null)
+            joystickObject.SetActive(false);
+    }
+
+    // 📱 Метод для кнопки Dash на мобилке
+    public void DashButton()
+    {
+        if (Time.time >= lastDashTime + dashCooldown && !isDashing)
+        {
+            Vector2 dashDir = movement;
+            if (dashDir == Vector2.zero) dashDir = Vector2.up;
+            StartCoroutine(Dash(dashDir));
+            lastDashTime = Time.time;
+        }
     }
 }
